@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Brothers Day 💙</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Caveat:wght@400;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0a0a0f;
+    --darker: #05050a;
+    --pink: #ff6eb4;
+    --blue: #4fc3f7;
+    --purple: #c084fc;
+    --gold: #fbbf24;
+    --cream: #fef3c7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ===== STARS BG ===== */
+  #stars-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ===== LANDING SCREEN ===== */
+  #landing {
+    position: fixed; inset: 0; z-index: 1000;
+    background: var(--darker);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2rem;
+  }
+
+  .pixel-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(12px, 3vw, 22px);
+    color: var(--pink);
+    text-align: center;
+    line-height: 2;
+    animation: glitch 3s infinite;
+  }
+
+  .pixel-sub {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(8px, 1.5vw, 12px);
+    color: var(--blue);
+    text-align: center;
+    line-height: 2;
+  }
+
+  @keyframes glitch {
+    0%, 90%, 100% { text-shadow: 2px 0 var(--blue), -2px 0 var(--pink); }
+    92% { text-shadow: -4px 0 var(--blue), 4px 0 var(--pink); transform: translateX(2px); }
+    94% { text-shadow: 4px 0 var(--purple), -4px 0 var(--gold); transform: translateX(-2px); }
+    96% { text-shadow: 2px 0 var(--blue), -2px 0 var(--pink); transform: translateX(0); }
+  }
+
+  .start-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(10px, 2vw, 14px);
+    background: transparent;
+    color: var(--gold);
+    border: 3px solid var(--gold);
+    padding: 1rem 2rem;
+    cursor: pointer;
+    animation: blink 1s infinite;
+    transition: all 0.2s;
+  }
+  .start-btn:hover { background: var(--gold); color: #000; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hearts-row { font-size: 1.5rem; letter-spacing: 0.5rem; opacity: 0.6; }
+
+  /* ===== MAIN CONTENT ===== */
+  #main { position: relative; z-index: 1; display: none; }
+
+  /* ===== HERO ===== */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(14px, 4vw, 36px);
+    background: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1.8; margin-bottom: 1rem;
+  }
+
+  .hero-sub {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(20px, 4vw, 32px);
+    color: var(--cream);
+    opacity: 0.85;
+    margin-bottom: 3rem;
+  }
+
+  /* ===== SECTION HEADERS ===== */
+  .section-header {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(10px, 2.5vw, 18px);
+    color: var(--pink);
+    text-align: center;
+    margin: 4rem 0 2rem;
+    padding: 0 1rem;
+  }
+
+  /* ===== PHOTO CARDS ===== */
+  .photo-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem 4rem;
+  }
+
+  .brother-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    margin-bottom: 5rem;
+  }
+  .brother-block.reverse {
+    direction: rtl;
+  }
+  .brother-block.reverse > * {
+    direction: ltr;
+  }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .photo-card {
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    min-height: 250px;
+  }
+  .photo-card:hover { transform: scale(1.05) rotate(-1deg); box-shadow: 0 0 30px var(--pink); }
+  .photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-card .tag {
+    position: absolute; bottom: 8px; left: 8px;
+    background: rgba(0,0,0,0.7);
+    font-family: 'Caveat', cursive;
+    font-size: 14px; color: var(--pink);
+    padding: 3px 10px; border-radius: 20px;
+    border: 1px solid var(--pink);
+  }
+  .photo-card.featured {
+    grid-column: span 2;
+    aspect-ratio: 16/9;
+    min-height: 280px;
+  }
+  .photo-card.featured img { object-position: center; }
+
+  .brother-info {
+    padding: 1.5rem;
+  }
+  .bro-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(12px, 2.5vw, 20px);
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .bro-nickname {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(18px, 3vw, 28px);
+    color: var(--pink);
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+  .bro-traits {
+    list-style: none;
+    margin-bottom: 2rem;
+  }
+  .bro-traits li {
+    font-size: 15px;
+    color: #ccc;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .bro-traits li::before { content: "▶"; color: var(--pink); font-size: 10px; }
+
+  .reveal-letter-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(8px, 1.5vw, 11px);
+    background: transparent;
+    color: var(--blue);
+    border: 2px solid var(--blue);
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .reveal-letter-btn:hover { background: var(--blue); color: #000; }
+
+  /* ===== GROUP SECTION ===== */
+  .group-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem 4rem;
+  }
+
+  .group-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .group-card {
+    border-radius: 16px; overflow: hidden;
+    position: relative; cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, var(--purple), var(--blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+  }
+  .group-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(255,110,180,0.3); }
+  .group-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .group-card .glabel {
+    position: absolute; top: 10px; left: 10px; right: 10px;
+    background: rgba(0,0,0,0.65);
+    font-family: 'Caveat', cursive;
+    font-size: 16px; color: var(--cream);
+    padding: 4px 12px; border-radius: 20px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  /* ===== SNAKE GAME ===== */
+  #game-section {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  #game-wrapper {
+    position: relative;
+    display: inline-block;
+    border: 3px solid var(--pink);
+    box-shadow: 0 0 30px rgba(255,110,180,0.4), inset 0 0 30px rgba(0,0,0,0.8);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  #gameCanvas {
+    display: block;
+    background: #060610;
+  }
+
+  .game-controls {
+    display: flex; gap: 1rem; justify-content: center;
+    margin-top: 1rem; flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    background: transparent;
+    color: var(--gold);
+    border: 2px solid var(--gold);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ctrl-btn:hover { background: var(--gold); color: #000; }
+
+  #score-display {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    color: var(--blue);
+    margin-top: 0.75rem;
+  }
+
+  .dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(3, 50px);
+    gap: 4px;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .dpad-btn {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.2);
+    color: #fff; font-size: 18px;
+    cursor: pointer; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.1s;
+    user-select: none;
+  }
+  .dpad-btn:active { background: rgba(255,110,180,0.3); }
+  .dpad-center { grid-column: 2; grid-row: 2; }
+
+  /* ===== LETTER MODAL ===== */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.3s;
+  }
+  @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+
+  .letter-box {
+    background: #0d0d1a;
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    max-width: 580px; width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 2.5rem;
+    position: relative;
+    box-shadow: 0 0 60px rgba(251,191,36,0.2);
+    animation: slideUp 0.4s;
+  }
+  @keyframes slideUp { from { transform: translateY(40px); opacity:0 } to { transform: translateY(0); opacity:1 } }
+
+  .letter-header {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(10px, 2vw, 13px);
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .letter-body {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(18px, 3vw, 22px);
+    color: #e8e0d0;
+    line-height: 1.9;
+  }
+
+  .letter-body p { margin-bottom: 1.2rem; }
+
+  .letter-sig {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(20px, 3.5vw, 26px);
+    color: var(--pink);
+    text-align: right;
+    margin-top: 2rem;
+  }
+
+  .close-btn {
+    position: absolute; top: 1rem; right: 1rem;
+    background: transparent; border: none;
+    color: #888; font-size: 24px; cursor: pointer;
+    transition: color 0.2s;
+  }
+  .close-btn:hover { color: var(--pink); }
+
+  /* ===== TOAST POPUPS ===== */
+  #toast-container {
+    position: fixed; bottom: 2rem; right: 1rem;
+    z-index: 8888;
+    display: flex; flex-direction: column; gap: 0.75rem;
+    align-items: flex-end;
+    pointer-events: none;
+  }
+
+  .toast {
+    background: #111128;
+    border: 1.5px solid var(--pink);
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    max-width: 280px;
+    font-family: 'Caveat', cursive;
+    font-size: 17px;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255,110,180,0.25);
+    animation: toastIn 0.4s ease, toastOut 0.4s ease 3.6s forwards;
+    pointer-events: auto;
+  }
+  @keyframes toastIn { from { transform: translateX(100%); opacity:0 } to { transform: translateX(0); opacity:1 } }
+  @keyframes toastOut { to { transform: translateX(120%); opacity:0 } }
+
+  /* ===== FOOTER ===== */
+  footer {
+    text-align: center;
+    padding: 3rem 1rem 4rem;
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    color: var(--pink);
+    opacity: 0.7;
+  }
+
+  /* ===== CONFETTI CANVAS ===== */
+  #confetti-canvas {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 5000;
+    display: none;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .brother-block { grid-template-columns: 1fr; gap: 2rem; }
+    .brother-block.reverse { direction: ltr; }
+    .group-grid { grid-template-columns: 1fr 1fr; }
+    .group-grid .group-card:last-child { grid-column: span 2; }
+  }
+
+  @media (max-width: 600px) {
+    .photo-grid { gap: 0.75rem; }
+    .photo-card { min-height: 180px; }
+    .photo-card.featured { min-height: 200px; }
+    .group-grid { grid-template-columns: 1fr; }
+    .group-grid .group-card:last-child { grid-column: span 1; }
+    .group-card { min-height: 220px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+<div id="toast-container"></div>
+
+<!-- LANDING -->
+<div id="landing">
+  <div class="pixel-title">⚡ BROTHERS DAY ⚡<br>SPECIAL EDITION</div>
+  <div class="pixel-sub">a gift from shruthi</div>
+  <div class="hearts-row">♥ ♥ ♥ ♥ ♥</div>
+  <button class="start-btn" onclick="startExperience()">▶ PRESS START</button>
+  <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:#444;text-align:center;line-height:2">
+    parth bhaiyuuu &amp; ayuuu<br>this one's for you
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-title">HAPPY BROTHERS DAY 🎮</div>
+    <div class="hero-sub">to the two most iconic humans in my life ♥</div>
+    <div style="font-family:'Press Start 2P',monospace;font-size:10px;color:#555;letter-spacing:3px">
+      scroll to explore ↓
+    </div>
+  </section>
+
+  <!-- PARTH SECTION -->
+  <div class="section-header">// PARTH BHAIYUUU //</div>
+  <div class="photo-section">
+    <div class="brother-block">
+      <div class="photo-grid">
+        <div class="photo-card featured" onclick="showToast('parth')">
+          📸 Parth's Best Moments
+        </div>
+        <div class="photo-card" onclick="showToast('parth')">
+          🖤
+        </div>
+        <div class="photo-card" onclick="showToast('parth')">
+          ✨
+        </div>
+      </div>
+      <div class="brother-info">
+        <div class="bro-name">PARTH</div>
+        <div class="bro-nickname">aka Parth Bhaiyuuu 🖤</div>
+        <ul class="bro-traits">
+          <li>The coolest brother alive</li>
+          <li>Heart of pure gold</li>
+          <li>Always shows up for us</li>
+          <li>Quietly caring & strong</li>
+        </ul>
+        <button class="reveal-letter-btn" onclick="openLetter('parth')">💌 READ MY LETTER</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AYUSH SECTION -->
+  <div class="section-header">// AYUUU //</div>
+  <div class="photo-section">
+    <div class="brother-block reverse">
+      <div class="photo-grid">
+        <div class="photo-card featured" onclick="showToast('ayush')">
+          📸 Ayush's Best Moments
+        </div>
+        <div class="photo-card" onclick="showToast('ayush')">
+          🎀
+        </div>
+        <div class="photo-card" onclick="showToast('ayush')">
+          ✨
+        </div>
+      </div>
+      <div class="brother-info">
+        <div class="bro-name">AYUSH</div>
+        <div class="bro-nickname">aka Ayuuu 🎀</div>
+        <ul class="bro-traits">
+          <li>Future doctor hero 🩺</li>
+          <li>Brings light everywhere</li>
+          <li>Genius + kind heart</li>
+          <li>Unfairly talented at everything</li>
+        </ul>
+        <button class="reveal-letter-btn" onclick="openLetter('ayush')">💌 READ MY LETTER</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GROUP SECTION -->
+  <div class="section-header">// US THREE //</div>
+  <div class="group-section">
+    <div class="group-grid">
+      <div class="group-card" onclick="showToast('group')">
+        📸
+      </div>
+      <div class="group-card" onclick="showToast('group')">
+        💜
+      </div>
+      <div class="group-card" onclick="showToast('group')">
+        ♥
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <button class="reveal-letter-btn" style="max-width:400px;margin:0 auto;display:block" onclick="openLetter('all')">💌 FROM SHRUTHI TO YOU BOTH</button>
+    </div>
+  </div>
+
+  <!-- SNAKE GAME -->
+  <div class="section-header">// BONUS: RETRO GAME //<br><span style="font-size:0.7em;color:var(--blue)">beat 50 pts to unlock a secret msg</span></div>
+  <div id="game-section">
+    <div id="game-wrapper">
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+    </div>
+    <div id="score-display">SCORE: 0 &nbsp;|&nbsp; HIGH: 0</div>
+    <div class="game-controls">
+      <button class="ctrl-btn" onclick="startGame()">▶ START</button>
+      <button class="ctrl-btn" onclick="pauseGame()">⏸ PAUSE</button>
+    </div>
+    <div class="dpad">
+      <div></div>
+      <div class="dpad-btn" ontouchstart="setDir(0,-1)" onmousedown="setDir(0,-1)">▲</div>
+      <div></div>
+      <div class="dpad-btn" ontouchstart="setDir(-1,0)" onmousedown="setDir(-1,0)">◀</div>
+      <div class="dpad-btn dpad-center" style="font-size:12px;font-family:'Press Start 2P',monospace;color:var(--pink)">OK</div>
+      <div class="dpad-btn" ontouchstart="setDir(1,0)" onmousedown="setDir(1,0)">▶</div>
+      <div></div>
+      <div class="dpad-btn" ontouchstart="setDir(0,1)" onmousedown="setDir(0,1)">▼</div>
+      <div></div>
+    </div>
+  </div>
+
+  <footer>
+    made with a LOT of love by shruthi 🖤<br>
+    <span style="font-size:16px;opacity:0.5">parth bhaiyuuu + ayuuu = my whole heart</span>
+  </footer>
+</div>
+
+<!-- LETTER MODALS -->
+<div id="modal-overlay" class="modal-overlay" style="display:none" onclick="closeLetter(event)">
+  <div class="letter-box" id="letter-box">
+    <button class="close-btn" onclick="closeLetter()">✕</button>
+    <div class="letter-header" id="letter-title"></div>
+    <div class="letter-body" id="letter-content"></div>
+    <div class="letter-sig" id="letter-sig"></div>
+  </div>
+</div>
+
+<script>
+// ===== STARS =====
+const starsCanvas = document.getElementById('stars-canvas');
+const sctx = starsCanvas.getContext('2d');
+let stars = [];
+
+function initStars() {
+  starsCanvas.width = window.innerWidth;
+  starsCanvas.height = window.innerHeight;
+  stars = Array.from({length: 180}, () => ({
+    x: Math.random() * starsCanvas.width,
+    y: Math.random() * starsCanvas.height,
+    r: Math.random() * 1.5 + 0.3,
+    a: Math.random(),
+    da: (Math.random() - 0.5) * 0.01
+  }));
+}
+function drawStars() {
+  sctx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+  stars.forEach(s => {
+    s.a = Math.max(0.1, Math.min(1, s.a + s.da));
+    if (s.a <= 0.1 || s.a >= 1) s.da *= -1;
+    sctx.globalAlpha = s.a;
+    sctx.fillStyle = '#fff';
+    sctx.beginPath();
+    sctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    sctx.fill();
+  });
+  sctx.globalAlpha = 1;
+  requestAnimationFrame(drawStars);
+}
+initStars();
+drawStars();
+window.addEventListener('resize', initStars);
+
+// ===== LANDING =====
+let toastsShown = false;
+function startExperience() {
+  document.getElementById('landing').style.transition = 'opacity 0.8s';
+  document.getElementById('landing').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    launchConfetti();
+    if (!toastsShown) {
+      toastsShown = true;
+      setTimeout(() => pushToast("🎮 Parth bhaiyuuu!! Open your letter!!"), 1500);
+      setTimeout(() => pushToast("🩺 Ayuuu!! This one's for you!"), 3500);
+      setTimeout(() => pushToast("❤️ Scroll down — Shruthi loves you both so much!"), 5500);
+    }
+  }, 800);
+}
+
+// ===== CONFETTI =====
+const confCanvas = document.getElementById('confetti-canvas');
+const cctx = confCanvas.getContext('2d');
+let confPieces = [];
+
+function launchConfetti() {
+  confCanvas.style.display = 'block';
+  confCanvas.width = window.innerWidth;
+  confCanvas.height = window.innerHeight;
+  confPieces = Array.from({length: 120}, () => ({
+    x: Math.random() * confCanvas.width,
+    y: -20,
+    vx: (Math.random() - 0.5) * 6,
+    vy: Math.random() * 4 + 2,
+    color: ['#ff6eb4','#4fc3f7','#c084fc','#fbbf24','#f472b6','#67e8f9'][Math.floor(Math.random()*6)],
+    size: Math.random() * 10 + 5,
+    rot: Math.random() * 360,
+    rotv: (Math.random() - 0.5) * 8
+  }));
+  animateConfetti();
+}
+
+function animateConfetti() {
+  cctx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+  confPieces = confPieces.filter(p => p.y < confCanvas.height + 30);
+  confPieces.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.rot += p.rotv;
+    cctx.save();
+    cctx.translate(p.x, p.y);
+    cctx.rotate(p.rot * Math.PI / 180);
+    cctx.fillStyle = p.color;
+    cctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+    cctx.restore();
+  });
+  if (confPieces.length > 0) requestAnimationFrame(animateConfetti);
+  else confCanvas.style.display = 'none';
+}
+
+// ===== TOASTS =====
+const toastMsgs = {
+  parth: [
+    "🖤 Parth bhaiyuuu — you're the coolest bhai in the universe",
+    "✨ Those tattoos? That vibe? Unmatched.",
+    "💪 Thank you for always having our backs",
+    "🎸 You're literally the coolest person I know",
+    "🖤 Nobody does 'brooding & caring' like you do"
+  ],
+  ayush: [
+    "🩺 Dr. Ayuuu in the making!! We're SO proud!!",
+    "🎀 The pink bow supremacy is REAL",
+    "💡 Brains, heart, AND that smile? Unfair.",
+    "❤️ You make everyone feel safe just by being you",
+    "✨ Future doctor with a heart bigger than his brain (and that's saying a lot)"
+  ],
+  group: [
+    "📸 We put the fun in dysfunction 💜",
+    "🍕 Extra cheese = extra problems lmaooo",
+    "♥ We break hearts AND furniture fr",
+    "🌙 Best chaotic trio to ever exist",
+    "�� My troublemakers forever"
+  ]
+};
+
+function showToast(who) {
+  const msgs = toastMsgs[who];
+  pushToast(msgs[Math.floor(Math.random() * msgs.length)]);
+}
+
+function pushToast(msg) {
+  const container = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  container.appendChild(t);
+  setTimeout(() => t.remove(), 4200);
+}
+
+// ===== LETTERS =====
+const letters = {
+  parth: {
+    title: "A LETTER FOR PARTH BHAIYUUU 🖤",
+    body: `<p>Parth Bhaiyuuu,</p>
+<p>I don't think you realise how much you mean to me. You've always been the person who shows up — quietly, steadily, without making a big deal of it. That's the thing about you. You protect people with your whole chest and never ask for anything in return.</p>
+<p>You carry this deep, soulful energy that makes everyone around you feel safe. Those tattoos aren't just ink — they're chapters of a person who feels everything deeply and loves even more fiercely. You're not just cool, Bhaiyuuu. You're real. And that's so much rarer.</p>
+<p>You're talented in ways you probably don't give yourself credit for. You notice things others miss. You feel things others can't name. And you have this incredible ability to hold space for people even when you're carrying your own storms.</p>
+<p>I want you to know — on this Brothers Day and every day — that having you as a brother is one of the best things in my life. You've shaped who I am more than you know.</p>
+<p>Be proud of yourself. You deserve all of it. 🖤</p>`,
+    sig: "— with all my love, Shruthi 🌙"
+  },
+  ayush: {
+    title: "A LETTER FOR AYUUU 🎀",
+    body: `<p>Ayuuu,</p>
+<p>Okay first of all — the pink bow? ICONIC. Never stop. It's giving "I'm soft AND I will outsmart you" and honestly that's such a you thing.</p>
+<p>But seriously. You are one of the most genuinely kind people I've ever known. You have this warmth that just pulls people in. And then they realise — oh wait, this person is also ridiculously talented. Like hello?? Future doctor, huge heart, incredible friend. You're not allowed to be that good at everything.</p>
+<p>I know med school is hard. I know some days feel endless. But I see how hard you work, and I want you to know that every single bit of effort you put in is going to matter. You are going to be the kind of doctor who actually changes lives — because you already change the lives of people around you just by being you.</p>
+<p>You're sweet, you're hilarious, you're smarter than you let on, and you have a heart that makes the world a softer place. Don't ever shrink that.</p>
+<p>Happy Brothers Day, Ayuuu. You deserve every good thing coming your way. 🎀💙</p>`,
+    sig: "— with SO much love, Shruthi ✨"
+  },
+  all: {
+    title: "FROM SHRUTHI, TO MY TWO WHOLE HEARTS 💜",
+    body: `<p>Parth Bhaiyuuu & Ayuuu,</p>
+<p>I made this for you both because words in a text just aren't enough. You two are the kind of brothers people write songs about, make films about — except you're real, and you're mine, and somehow that's even better.</p>
+<p>We're chaotic. We're dramatic. We eat too much pizza, we blame the middle one for everything, and we absolutely refuse to follow our own rules. But there is not a single moment with you two that I would trade for anything.</p>
+<p>Parth Bhaiyuuu — you're my anchor. The one I know will always show up. You protect with such quiet strength, and you love with your whole being even when you pretend you don't care. I see you. I appreciate you more than I say.</p>
+<p>Ayuuu — you're my sunshine. The one who makes everything lighter. You're going to do such incredible things in this world, and I'll be cheering the loudest every single time. Don't you dare forget that.</p>
+<p>I love you both so stupidly much. Thank you for being my brothers. Thank you for being my people. This little website is the most I could do from here — but just know, my heart is there with you both today and always.</p>
+<p>Happy Brothers Day. 🖤💙</p>`,
+    sig: "— forever yours, Shruthi 🌙🎀"
+  }
+};
+
+function openLetter(who) {
+  const l = letters[who];
+  document.getElementById('letter-title').textContent = l.title;
+  document.getElementById('letter-content').innerHTML = l.body;
+  document.getElementById('letter-sig').textContent = l.sig;
+  document.getElementById('modal-overlay').style.display = 'flex';
+  setTimeout(() => pushToast("💌 Read every word. It's all true."), 500);
+}
+
+function closeLetter(e) {
+  if (!e || e.target === document.getElementById('modal-overlay') || e.currentTarget.className === 'close-btn') {
+    document.getElementById('modal-overlay').style.display = 'none';
+  }
+}
+
+// ===== SNAKE GAME =====
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const GRID = 20;
+const COLS = canvas.width / GRID;
+const ROWS = canvas.height / GRID;
+
+let snake, dir, nextDir, food, score, highScore = 0, gameLoop, running = false, paused = false;
+
+function initGame() {
+  snake = [{x:10, y:10}, {x:9,y:10}, {x:8,y:10}];
+  dir = {x:1, y:0};
+  nextDir = {x:1, y:0};
+  score = 0;
+  placeFood();
+  updateScore();
+}
+
+function placeFood() {
+  do {
+    food = {x: Math.floor(Math.random()*COLS), y: Math.floor(Math.random()*ROWS)};
+  } while (snake.some(s => s.x===food.x && s.y===food.y));
+}
+
+function startGame() {
+  if (running) return;
+  initGame();
+  running = true; paused = false;
+  gameLoop = setInterval(tick, 130);
+  pushToast("🎮 Snake game started! Use arrow keys or d-pad!");
+}
+
+function pauseGame() {
+  if (!running) return;
+  paused = !paused;
+  if (paused) { clearInterval(gameLoop); pushToast("⏸ Paused!"); }
+  else { gameLoop = setInterval(tick, 130); pushToast("▶ Resumed!"); }
+}
+
+function setDir(dx, dy) {
+  if (dx === -dir.x && dy === -dir.y) return;
+  nextDir = {x:dx, y:dy};
+}
+
+function tick() {
+  dir = nextDir;
+  const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+  if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS || snake.some(s => s.x===head.x && s.y===head.y)) {
+    clearInterval(gameLoop); running = false;
+    if (score > highScore) highScore = score;
+    updateScore();
+    pushToast("💀 Game over! Score: " + score + " — try again!");
+    if (score >= 50) {
+      setTimeout(() => pushToast("🎉 SECRET UNLOCKED! Parth bhaiyuuu & Ayuuu are the best brothers in the multiverse!!"), 1000);
+      setTimeout(() => launchConfetti(), 1200);
+    }
+    drawGameOver();
+    return;
+  }
+  snake.unshift(head);
+  if (head.x === food.x && head.y === food.y) {
+    score += 10;
+    updateScore();
+    placeFood();
+    if (score % 50 === 0) pushToast("🔥 " + score + " points!! You're on fire!!");
+  } else {
+    snake.pop();
+  }
+  draw();
+}
+
+function updateScore() {
+  document.getElementById('score-display').textContent = 'SCORE: ' + score + '   |   HIGH: ' + highScore;
+}
+
+function draw() {
+  ctx.fillStyle = '#060610';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
+  for (let x=0;x<COLS;x++) for (let y=0;y<ROWS;y++) ctx.fillRect(x*GRID+9, y*GRID+9, 2, 2);
+  ctx.fillStyle = '#ff6eb4';
+  ctx.shadowBlur = 12; ctx.shadowColor = '#ff6eb4';
+  ctx.beginPath();
+  ctx.arc(food.x*GRID+GRID/2, food.y*GRID+GRID/2, GRID/2-2, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  snake.forEach((s, i) => {
+    const ratio = i / snake.length;
+    ctx.fillStyle = i===0 ? '#4fc3f7' : `hsl(${160 + ratio*60}, 80%, ${55 - ratio*15}%)`;
+    ctx.shadowBlur = i===0 ? 10 : 0;
+    ctx.shadowColor = '#4fc3f7';
+    ctx.fillRect(s.x*GRID+1, s.y*GRID+1, GRID-2, GRID-2);
+    ctx.shadowBlur = 0;
+  });
+}
+
+function drawGameOver() {
+  ctx.fillStyle = 'rgba(0,0,0,0.7)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#ff6eb4';
+  ctx.font = 'bold 14px "Press Start 2P"';
+  ctx.textAlign = 'center';
+  ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2 - 20);
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = '11px "Press Start 2P"';
+  ctx.fillText('SCORE: ' + score, canvas.width/2, canvas.height/2 + 10);
+  ctx.fillStyle = '#aaa';
+  ctx.font = '9px "Press Start 2P"';
+  ctx.fillText('PRESS START TO RETRY', canvas.width/2, canvas.height/2 + 40);
+  ctx.textAlign = 'left';
+}
+
+(function drawIdle() {
+  ctx.fillStyle = '#060610';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#ff6eb4';
+  ctx.font = '12px "Press Start 2P"';
+  ctx.textAlign = 'center';
+  ctx.fillText('PRESS START', canvas.width/2, canvas.height/2 - 10);
+  ctx.fillStyle = '#4fc3f7';
+  ctx.font = '9px "Press Start 2P"';
+  ctx.fillText('beat 50 pts for a secret', canvas.width/2, canvas.height/2 + 20);
+  ctx.textAlign = 'left';
+})();
+
+document.addEventListener('keydown', e => {
+  const map = {ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0]};
+  if (map[e.key]) { e.preventDefault(); setDir(...map[e.key]); }
+});
+
+let scrollToasts = [
+  {pos: 0.25, msg: "✨ Parth Bhaiyuuu — scroll down, your letter is waiting!"},
+  {pos: 0.5, msg: "🩺 Ayuuu — the doctor who stole our hearts 🎀"},
+  {pos: 0.75, msg: "💜 Click the photos for fun messages!"},
+];
+window.addEventListener('scroll', () => {
+  const progress = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  scrollToasts = scrollToasts.filter(t => {
+    if (progress >= t.pos) { pushToast(t.msg); return false; }
+    return true;
+  });
+});
+</script>
+</body>
+</html>
